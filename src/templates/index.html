@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zoom Records Publisher</title>
+</head>
+<body>
+
+<div class="center">
+    <div id="status">
+        {{ status }}
+    </div>
+    <progress id="progress">
+        Progress bar
+    </progress>
+</div>
+
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+
+    function setState(state) {
+
+        document.getElementById("status").textContent = state.status
+
+        if (state.progress.value != null) {
+            document.getElementById("progress").value = state.progress.value
+            document.getElementById("progress").max = state.progress.max
+        } else {
+            document.getElementById("progress").removeAttribute("value")
+        }
+
+        if (state.end) {
+            document.getElementById("progress").style.display = "none"
+        }
+
+    }
+
+    var socket = io();
+
+    socket.on('connect', function() {
+        socket.emit('get_status')
+    })
+
+    socket.on('status', function(data) {
+        console.log("DATA: ", data)
+        setState(data)
+    })
+
+    socket.on('status_changed', function(data) {
+        setState(data)
+    });
+</script>
+
+<style>
+
+.center {
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    overflow: auto;
+
+    flex-direction: column
+}
+
+</style>
