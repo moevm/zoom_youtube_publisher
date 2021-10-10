@@ -52,6 +52,10 @@ class WebThread(Thread):
 
             return redirect("/")
 
+        @app.route("/logs")
+        def logs():
+            return render_template("index.html", get_status=self.message.status)
+
         @app.route("/")
         def watch_handler():
             return render_template("index.html", status=self.message.status)
