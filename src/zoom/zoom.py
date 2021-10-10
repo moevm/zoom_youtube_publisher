@@ -1,7 +1,7 @@
 import base64
 import requests
 
-from record import Record
+from .record import Record
 
 ZOOM_OAUTH_AUTHORIZE = "https://zoom.us/oauth/authorize"
 REDIRECT_URL = "http://localhost:7034/zoom"

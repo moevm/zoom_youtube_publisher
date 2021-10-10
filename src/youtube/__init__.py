@@ -1,1 +1,1 @@
-from youtube import YoutubeClient
+from .youtube import YoutubeClient

@@ -1,1 +1,1 @@
-from zoom import ZoomClient
+from .zoom import ZoomClient

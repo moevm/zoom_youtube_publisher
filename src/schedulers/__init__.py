@@ -1,1 +1,1 @@
-from safeschedule import SafeScheduler
+from .safeschedule import SafeScheduler

@@ -8,7 +8,7 @@ from threading import Thread
 from flask import Flask, request, redirect, render_template
 from flask_socketio import SocketIO, emit
 
-from message import Message
+from .message import Message
 
 
 class WebThread(Thread):

@@ -1,1 +1,1 @@
-from signalhandlers import on_signal
+from .signalhandlers import on_signal
