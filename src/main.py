@@ -1,9 +1,14 @@
+import time
 from queue import Queue
 import json
 import os
+import signal
+import sys
 
-from publisher import PublisherThread
-from web import WebThread
+from appthreads import PublisherThread
+from appthreads import WebThread
+from schedulers import SafeScheduler
+from signals import on_signal
 from youtube import YoutubeClient
 from zoom import ZoomClient
 
@@ -37,15 +42,6 @@ if __name__ == '__main__':
         zoom.login(zoom_code)
         youtube.login(youtube_code)
 
-    try:
-
-        publisher = PublisherThread(zoom, youtube, message_queue)
-        publisher.start()
-        publisher.join()
-
-    except Exception as e:
-        print(e)
-
     oauth2_cache = {
         "zoom_access_token": zoom.access_token,
         "zoom_refresh_token": zoom.refresh_token,
@@ -55,3 +51,25 @@ if __name__ == '__main__':
     with open(".oauth2", "w") as f:
         json.dump(oauth2_cache, f)
 
+    scheduler = SafeScheduler()
+
+    @on_signal
+    def clear_schedule(s):
+        s.clear()
+        sys.exit(0)
+
+    def publish_job():
+        publisher = PublisherThread(zoom, youtube, message_queue)
+        publisher.daemon = True
+        publisher.start()
+        publisher.join()
+        print("Published")
+
+    sigterm_handler = clear_schedule(scheduler)
+    signal.signal(signal.SIGTERM, sigterm_handler)
+
+    scheduler.every(15).seconds.do(publish_job)
+    scheduler.run_all()
+    while True:
+        scheduler.run_pending()
+        time.sleep(1)

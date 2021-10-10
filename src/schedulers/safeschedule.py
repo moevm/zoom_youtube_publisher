@@ -15,4 +15,7 @@ class SafeScheduler(Scheduler):
         except Exception as e:
             if self.logger is not None:
                 self.logger.error(e)
-            self.cancel_job(job)
+            else:
+                print(e)
+            job.last_run = datetime.datetime.now()
+            job._schedule_next_run()
