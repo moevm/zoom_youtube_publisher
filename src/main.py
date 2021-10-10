@@ -68,7 +68,7 @@ if __name__ == '__main__':
     sigterm_handler = clear_schedule(scheduler)
     signal.signal(signal.SIGTERM, sigterm_handler)
 
-    scheduler.every(15).seconds.do(publish_job)
+    scheduler.every(5).minutes.do(publish_job)
     scheduler.run_all()
     while True:
         scheduler.run_pending()
