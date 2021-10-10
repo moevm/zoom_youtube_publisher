@@ -7,7 +7,7 @@ from urllib.request import urlretrieve
 
 from googleapiclient.errors import ResumableUploadError
 
-from .message import *
+from message import *
 
 HTTP_UNAUTHORIZED_CODE = 401
 QUOTA_EXCEEDED_REASON = "quotaExceeded"

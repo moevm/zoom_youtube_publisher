@@ -5,10 +5,10 @@ import os
 import signal
 import sys
 
-from appthreads import PublisherThread
-from appthreads import WebThread
-from schedulers import SafeScheduler
-from signals import on_signal
+from publisher import PublisherThread
+from web import WebThread
+from safeschedule import SafeScheduler
+from signalhandlers import on_signal
 from youtube import YoutubeClient
 from zoom import ZoomClient
 
