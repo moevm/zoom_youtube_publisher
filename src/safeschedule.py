@@ -14,7 +14,7 @@ class SafeScheduler(Scheduler):
             super()._run_job(job)
         except Exception as e:
             if self.logger is not None:
-                self.logger.error(e)
+                self.logger.exception("Error in scheduler")
             else:
                 print(e)
             job.last_run = datetime.datetime.now()
