@@ -1,0 +1,21 @@
+name: docker container check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build container
+        run: sh build.sh
+
+      - name: run container
+        run: sh run.sh
+
+      - name: check container
+        run: curl http://localhost:7034
+
