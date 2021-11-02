@@ -90,7 +90,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, exit_handler)
     signal.signal(signal.SIGINT, exit_handler)
 
-    scheduler.every(5).minutes.do(publish_job, app_logger)
+    publication_minutes = int(os.environ['PUBLICATION_MINUTES_FREQUENCY'])
+    scheduler.every(publication_minutes).minutes.do(publish_job, app_logger)
     scheduler.run_all()
     while True:
         scheduler.run_pending()
