@@ -18,9 +18,10 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       - name: run container
-        run: sh run.sh
+        run: docker run --env-file .env.example -p 7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
         working-directory: ${{env.working-directory}}
 
       - name: check container
-        run: curl http://localhost:7034
-
+        uses: wei/curl@v1
+        with:
+          args: -v http://localhost:7034
