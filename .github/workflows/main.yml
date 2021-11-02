@@ -7,14 +7,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./src
     steps:
-      - uses: actions/checkout@v2
+      - name: checkout code
+        uses: actions/checkout@v2
 
       - name: build container
         run: sh build.sh
+        working-directory: ${{env.working-directory}}
 
       - name: run container
         run: sh run.sh
+        working-directory: ${{env.working-directory}}
 
       - name: check container
         run: curl http://localhost:7034
