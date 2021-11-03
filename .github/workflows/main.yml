@@ -23,7 +23,7 @@ jobs:
 
       - name: check container
         run: |
-          sleep 3
+          sleep 10
           docker ps
           docker inspect zoom_yt
 
