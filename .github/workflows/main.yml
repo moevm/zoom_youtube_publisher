@@ -26,7 +26,11 @@ jobs:
           sleep 3
           docker ps
           docker inspect zoom_yt
+
+      - name: check net
+        run: |
           netstat -a -n -o
+          nc -vz localhost 7034
 
       - name: check container connection
         uses: wei/curl@v1
