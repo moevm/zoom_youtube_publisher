@@ -31,4 +31,4 @@ jobs:
       - name: check container connection
         uses: wei/curl@v1
         with:
-          args: -v http://localhost:7034
+          args: -v http://127.0.0.1:7034
