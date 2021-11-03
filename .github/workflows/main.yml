@@ -18,10 +18,17 @@ jobs:
         working-directory: ${{env.working-directory}}
 
       - name: run container
-        run: docker run --env-file .env.example -p 7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
+        run: docker run --name zoom_yt --env-file .env.example -p 127.0.0.1:7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
         working-directory: ${{env.working-directory}}
 
       - name: check container
+        run: |
+          sleep 3
+          docker ps
+          docker inspect zoom_yt
+          netstat -a -n -o
+
+      - name: check container connection
         uses: wei/curl@v1
         with:
           args: -v http://localhost:7034
