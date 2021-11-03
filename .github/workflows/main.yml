@@ -30,7 +30,7 @@ jobs:
       - name: check net
         run: |
           netstat -a -n -o
-          nc -vz localhost 7034
+          nc -vz 127.0.0.1 7034
 
       - name: check container connection
         uses: wei/curl@v1
