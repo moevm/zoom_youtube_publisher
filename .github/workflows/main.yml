@@ -33,6 +33,4 @@ jobs:
           nc -vz 127.0.0.1 7034
 
       - name: check container connection
-        uses: wei/curl@v1
-        with:
-          args: -v http://127.0.0.1:7034
+        run: curl http://127.0.0.1:7034
