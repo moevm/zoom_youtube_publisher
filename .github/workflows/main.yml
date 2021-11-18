@@ -1,0 +1,36 @@
+name: docker container check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./src
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: build container
+        run: sh build.sh
+        working-directory: ${{env.working-directory}}
+
+      - name: run container
+        run: docker run --name zoom_yt --env-file .env.example -p 127.0.0.1:7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
+        working-directory: ${{env.working-directory}}
+
+      - name: check container
+        run: |
+          sleep 10
+          docker ps
+          docker inspect zoom_yt
+
+      - name: check net
+        run: |
+          netstat -a -n -o
+          nc -vz 127.0.0.1 7034
+
+      - name: check container connection
+        run: curl http://127.0.0.1:7034
