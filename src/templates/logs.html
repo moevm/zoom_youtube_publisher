@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <ul>
+    {% for log in logs %}
+        <li>
+            {{ log['asctime'] }} {{ log['levelname'] }} - <span class="message">{{ log['message'] }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

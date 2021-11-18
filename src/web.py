@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -28,7 +29,7 @@ class WebThread(Thread):
         app = Flask(__name__)
         socketio = SocketIO(app)
 
-        logging.disable()
+        # logging.disable()
 
         def echo(*args, **kwargs): pass
         def secho(*args, **kwargs): pass
@@ -51,6 +52,13 @@ class WebThread(Thread):
             self.codes_queue.put(youtube_code)
 
             return redirect("/")
+
+        @app.route("/logs")
+        def logs():
+            with open('logs/app.log') as entries:
+                return render_template("logs.html",
+                                       title="Zoom Youtube Publisher Logs",
+                                       logs=map(json.loads, entries))
 
         @app.route("/")
         def watch_handler():
