@@ -7,6 +7,8 @@ from urllib.request import urlretrieve
 
 from googleapiclient.errors import ResumableUploadError
 
+from login import build_oauth
+
 from message import *
 
 HTTP_UNAUTHORIZED_CODE = 401
@@ -15,13 +17,16 @@ QUOTA_EXCEEDED_REASON = "quotaExceeded"
 
 class PublisherThread(Thread):
 
-    def __init__(self, zoom, youtube, message_queue):
+    def __init__(self, zoom, youtube, message_queue, code_queue, logger):
         Thread.__init__(self)
 
         self.zoom = zoom
         self.youtube = youtube
 
         self.message_queue = message_queue
+        self.code_queue = code_queue
+
+        self.logger = logger
 
     def run(self) -> None:
 
@@ -31,7 +36,19 @@ class PublisherThread(Thread):
         meetings = set(map(int, os.environ["MEETING_ID"].split(" ")))
 
         while not is_completed:
-            records, is_completed = self.zoom.get_records(meetings)
+            try:
+                records, is_completed = self.zoom.get_records(meetings)
+            except KeyError:
+                self.message_queue.put(Message(INVALID_TOKENS, link=(
+                    self.zoom.get_authorize_code_url(),
+                    'Обновление токенов'
+                )))
+                self.logger.warning("Tokens were invalidated")
+                os.remove(".oauth2")
+                build_oauth(self.zoom, self.youtube, self.code_queue)
+                self.message_queue.put(Message(NEW_TOKENS))
+
+                records, is_completed = self.zoom.get_records(meetings)
 
             if not is_completed:
                 self.message_queue.put(Message(WAIT_FOR_COMPLETED_STATUS))

@@ -4,7 +4,7 @@
     <ul>
     {% for log in logs %}
         <li>
-            {{ log['asctime'] }} {{ log['levelname'] }} - <span class="message">{{ log['message'] }}</span>
+            {{ log['asctime'] }} {{ log['levelname'] }} - <span class="logger_message">{{ log['message'] }}</span>
         </li>
     {% endfor %}
     </ul>

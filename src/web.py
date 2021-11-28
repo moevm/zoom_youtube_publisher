@@ -62,7 +62,7 @@ class WebThread(Thread):
 
         @app.route("/")
         def watch_handler():
-            return render_template("index.html", status=self.message.status)
+            return render_template("index.html", status=self.message.status, link=self.message.link)
 
         @socketio.event
         def get_status():
@@ -72,7 +72,11 @@ class WebThread(Thread):
                     "value": self.message.progress[0],
                     "max": self.message.progress[1]
                 },
-                "end": self.message.end
+                "end": self.message.end,
+                "link": {
+                    'href': self.message.link[0],
+                    'text': self.message.link[1]
+                }
             })
 
         server = Thread(target=lambda: socketio.run(app, host="0.0.0.0", port=7034), daemon=True)
@@ -87,7 +91,11 @@ class WebThread(Thread):
                     "value": self.message.progress[0],
                     "max": self.message.progress[1]
                 },
-                "end": self.message.end
+                "end": self.message.end,
+                "link": {
+                    'href': self.message.link[0],
+                    'text': self.message.link[1]
+                }
             })
 
         time.sleep(2)
