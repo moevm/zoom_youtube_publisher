@@ -22,7 +22,6 @@ services:
     env_file:
       - mongo.env
     volumes:
-      - ./mongo-init/:/docker-entrypoint-initdb.d/
       - mongodb_data_container:/data/db
 
 volumes:
