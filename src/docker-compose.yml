@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  zoom-youtube-publisher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "7034:7034"
+    volumes:
+      - ./:/app
+    image: zoom-youtube-publisher
+    links:
+      - mongodb-container
+
+  mongodb-container:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    env_file:
+      - mongo.env
+    volumes:
+      - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:
