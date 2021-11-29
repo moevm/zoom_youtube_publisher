@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./src
+
+
     steps:
       - name: checkout code
         uses: actions/checkout@v2
@@ -31,5 +33,11 @@ jobs:
           netstat -a -n -o
           nc -vz 127.0.0.1 7034
 
-      - name: check container connection
+      - name: check app connection
         run: curl http://127.0.0.1:7034
+
+      - name: load mongo env values
+        run: cat mongo.env.example >> ${GITHUB_ENV}
+
+      - name: check mongodb connection
+        run: mongosh mongodb://${{env.MONGO_INITDB_ROOT_USERNAME}}:${{env.MONGO_INITDB_ROOT_PASSWORD}}@localhost:27018/admin
