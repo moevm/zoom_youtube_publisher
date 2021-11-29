@@ -38,6 +38,7 @@ jobs:
 
       - name: load mongo env values
         run: cat mongo.env.example >> ${GITHUB_ENV}
+        working-directory: ${{env.working-directory}}
 
       - name: check mongodb connection
         run: mongosh mongodb://${{env.MONGO_INITDB_ROOT_USERNAME}}:${{env.MONGO_INITDB_ROOT_PASSWORD}}@localhost:27018/admin
