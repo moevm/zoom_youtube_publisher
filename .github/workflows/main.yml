@@ -14,18 +14,17 @@ jobs:
         uses: actions/checkout@v2
 
       - name: build container
-        run: sh build.sh
+        run: docker-compose build
         working-directory: ${{env.working-directory}}
 
       - name: run container
-        run: docker run --name zoom_yt --env-file .env.example -p 127.0.0.1:7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
+        run: docker-compose up -d
         working-directory: ${{env.working-directory}}
 
       - name: check container
         run: |
           sleep 10
           docker ps
-          docker inspect zoom_yt
 
       - name: check net
         run: |
