@@ -2,9 +2,14 @@
 
 {% block content %}
     <div class="center">
-        <div id="status">
+        <div id="status" class="status_message">
             {{ status }}
         </div>
+        {% if link[0] %}
+            <a id="message_link" href="{{ link[0] }}">{{ link[1] }}</a>
+        {% else %}
+            <a id="message_link"></a>
+        {% endif %}
         <progress id="progress">
             Progress bar
         </progress>
