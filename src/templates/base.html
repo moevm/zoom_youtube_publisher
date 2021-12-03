@@ -10,8 +10,15 @@
         {% endif %}
     </title>
     <style>
-        .message {
+        .header {
+            height: 2%;
+        }
+        .logger_message {
             white-space: pre-wrap;
+        }
+        .status_message {
+            white-space: pre-wrap;
+            text-align: center;
         }
         .center {
             width: 100%;
@@ -29,13 +36,13 @@
 
             flex-direction: column;
 
-            pointer-events: none;
+            margin-top: 2%;
         }
 
     </style>
 </head>
 <body>
-    <div>
+    <div class="header">
         Zoom Youtube Publisher: <a href="{{ url_for('logs') }}">Logs</a>
     </div>
     <hr>

@@ -12,7 +12,7 @@ def pull_logger(name, level):
 
     formatter = jsonlogger.JsonFormatter("%(asctime)s %(levelname)s %(message)s")
 
-    handler = RotatingFileHandler(os.path.join("logs", "app.log"), maxBytes=10000, backupCount=5)
+    handler = RotatingFileHandler(os.path.join("logs", "app.log"), maxBytes=100000, backupCount=5)
     handler.setLevel(level)
     handler.setFormatter(formatter)
 
