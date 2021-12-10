@@ -1,0 +1,59 @@
+{
+  "from": "2019-08-15",
+  "to": "2019-09-15",
+  "page_count": 1,
+  "page_size": 30,
+  "total_records": 1,
+  "next_page_token": "",
+  "meetings": [
+    {
+      "uuid": "gkABCDEnCkPuA==",
+      "id": 1000000000000,
+      "account_id": "AbcjxkfhdEEE",
+      "host_id": "z8dfkgABBBBBBBfp8uQ",
+      "topic": "MyTestPollMeeting",
+      "type": 2,
+      "start_time": "2019-08-29T21:54:49Z",
+      "timezone": "America/Los_Angeles",
+      "duration": 1,
+      "total_size": 47383,
+      "recording_count": 1,
+      "share_url": "https://api.zoom.us/recording/share/IABCDJDKDJEEEEEk_GwfdggdgkTziMw",
+      "recording_files": [
+        {
+          "id": "589ABBBBB-8718e",
+          "meeting_id": "gkABCDEnCkPuA==",
+          "recording_start": "2019-08-29T21:54:55Z",
+          "recording_end": "2019-08-29T21:55:24Z",
+          "file_type": "M4A",
+          "file_size": 10098,
+          "play_url": "https://api.zoom.us/recording/play/pfA2AvvvvvAnAzOibbbbELxl",
+          "download_url": "https://api.zoom.us/recording/download/pfA2AvvvvvAnAzOibbbbELxl",
+          "status": "completed",
+          "recording_type": "audio_only"
+        },
+        {
+          "meeting_id": "gkABCDEnCkPuA==",
+          "recording_start": "2019-08-29T21:54:55Z",
+          "recording_end": "2019-08-29T21:55:24Z",
+          "file_type": "TIMELINE",
+          "download_url": "https://api.zoom.us/recording/download/cc33ekldfdjfhf3-aaaaa",
+          "status": "completed",
+          "recording_type": "shared_screen_with_speaker_view"
+        },
+        {
+          "id": "96119b=kdfhf791",
+          "meeting_id": "gkABCDEnCkPuA==",
+          "recording_start": "2019-08-29T21:54:55Z",
+          "recording_end": "2019-08-29T21:55:24Z",
+          "file_type": "MP4",
+          "file_size": 37285,
+          "play_url": "https://api.zoom.us/recording/play/abcdkjfhdhfdhfj",
+          "download_url": "https://api.zoom.us/recording/download/abcdkjfhdhfdhfj",
+          "status": "completed",
+          "recording_type": "shared_screen_with_speaker_view"
+        }
+      ]
+    }
+  ]
+}
