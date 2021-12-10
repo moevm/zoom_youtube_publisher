@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      working-directory: ./src
+      working-directory: ./app
 
 
     steps:
@@ -22,6 +22,9 @@ jobs:
       - name: run container
         run: docker-compose up -d
         working-directory: ${{env.working-directory}}
+
+      - name: run pytest
+        run: docker exec publisher bash -c 'cd ..; python -m pytest app/tests -vv'
 
       - name: check container
         run: |

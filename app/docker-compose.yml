@@ -12,6 +12,7 @@ services:
     volumes:
       - ./:/app
     image: zoom-youtube-publisher
+    container_name: publisher
     links:
       - mongodb-container
 

@@ -1,11 +1,16 @@
 import json
 from os import path
+import pytest
 
-from src.zoom import ZoomClient
+from app.zoom import ZoomClient
+
+
+def pytest_configure():
+    pytest.records = []
 
 
 def get_data_path(filename):
-    return path.join("data", filename)
+    return path.join("app", "tests", "data", filename)
 
 
 def mock_repeat_get(dat_class, url):
@@ -17,9 +22,6 @@ def mock_response_get(url):
     return None
 
 
-records = []
-
-
 def get_templates_by_mask(record, date_required, index_required):
     record.date_required = date_required
     record.index_required = index_required
@@ -29,22 +31,21 @@ def get_templates_by_mask(record, date_required, index_required):
 
 class TestRecords:
     def test_get_records(self, mocker):
-        mocker.patch('src.zoom.ZoomClient._repeat_get', mock_repeat_get)
+        mocker.patch('app.zoom.ZoomClient._repeat_get', mock_repeat_get)
         mocker.patch('requests.api.get', )
 
         client = ZoomClient("42", "secret")
         meetings = {1000000000000, 101010101010}
-        global records
-        records, is_completed = client.get_records(meetings)
+        pytest.records, is_completed = client.get_records(meetings)
 
-        assert is_completed and len(records) == 2
-        assert records[0].youtube_privacy_status == 'private'
-        assert not records[0].save_flag
-        assert records[0].index is not None and records[1].index is not None
-        assert records[1].youtube_playlist_id is None
+        assert is_completed and len(pytest.records) == 2
+        assert pytest.records[0].youtube_privacy_status == 'private'
+        assert not pytest.records[0].save_flag
+        assert pytest.records[0].index is not None and pytest.records[1].index is not None
+        assert pytest.records[1].youtube_playlist_id is None
 
     def test_get_video_name(self):
-        record = records[0]
+        record = pytest.records[0]
         record.topic_template = "{topic} : {id}"
         record.index_template = " - {index}"
         record.date_template = " - {date}"
