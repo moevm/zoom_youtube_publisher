@@ -12,6 +12,15 @@ function setState(state) {
         document.getElementById("progress").style.display = "none"
     }
 
+    let message_link = document.getElementById("message_link");
+    if (state.link.text != null) {
+        message_link.textContent = state.link.text;
+        message_link.href = state.link.href;
+    } else {
+        message_link.textContent = "";
+        message_link.href = "";
+    }
+
 }
 
 var socket = io();
