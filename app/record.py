@@ -5,6 +5,7 @@ from datetime import datetime
 class Record:
 
     def __init__(self, meeting, record):
+        self.strftime_template = "%d.%m.%y %H:%M"
 
         self.meeting_topic = meeting["topic"]
         self.meeting_id = meeting["id"]
@@ -34,21 +35,21 @@ class Record:
         title = self._get_template(self.topic_template, 'TOPIC_TEMPLATE').format(
             topic=self.meeting_topic,
             id=self.meeting_id,
-            date=self.meeting_time.strftime("%d.%m.%y")
+            date=self.meeting_time.strftime(self.strftime_template)
         )
 
         if self.date_required:
             title += self._get_template(self.date_template, 'DATE_TEMPLATE').format(
                 topic=self.meeting_topic,
                 id=self.meeting_id,
-                date=self.meeting_time.strftime("%d.%m.%y")
+                date=self.meeting_time.strftime(self.strftime_template)
             )
 
         if self.index_required:
             title += self._get_template(self.index_template, 'INDEX_TEMPLATE').format(
                 topic=self.meeting_topic,
                 id=self.meeting_id,
-                date=self.meeting_time.strftime("%d.%m.%y"),
+                date=self.meeting_time.strftime(self.strftime_template),
                 index=self.index
             )
 

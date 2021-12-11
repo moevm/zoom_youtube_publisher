@@ -51,6 +51,6 @@ class TestRecords:
         record.date_template = " - {date}"
 
         assert get_templates_by_mask(record, False, False) == "MyTestPollMeeting : 1000000000000"
-        assert get_templates_by_mask(record, True, False) == "MyTestPollMeeting : 1000000000000 - 29.08.19"
+        assert get_templates_by_mask(record, True, False) == "MyTestPollMeeting : 1000000000000 - 29.08.19 21:54"
         assert get_templates_by_mask(record, False, True) == "MyTestPollMeeting : 1000000000000 - 1"
-        assert get_templates_by_mask(record, True, True) == "MyTestPollMeeting : 1000000000000 - 29.08.19 - 1"
+        assert get_templates_by_mask(record, True, True) == "MyTestPollMeeting : 1000000000000 - 29.08.19 21:54 - 1"
