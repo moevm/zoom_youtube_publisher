@@ -67,6 +67,8 @@ class PublisherThread(Thread):
                 else:
                     raise e
 
+            self.logger.info(f"{title}.mp4 downloaded")
+
         for index, record in enumerate(records):
 
             self.message_queue.put(Message(UPLOADING_RECORDS_STATUS, (index, len(records))))
@@ -81,6 +83,7 @@ class PublisherThread(Thread):
                     record.youtube_privacy_status)
 
                 record.set_video(video)
+                self.logger.info(f"{title}.mp4 published")
             except ResumableUploadError as e:
                 if e.error_details[0]["reason"] == QUOTA_EXCEEDED_REASON:
                     self.message_queue.put(Message(QUOTA_EXCEEDED, end=True))
