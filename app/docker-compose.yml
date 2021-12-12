@@ -2,6 +2,8 @@ version: '3'
 
 services:
   zoom-youtube-publisher:
+    environment:
+      - PYTHONUNBUFFERED=1
     build:
       context: .
       dockerfile: Dockerfile
