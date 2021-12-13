@@ -44,7 +44,7 @@ class PublisherThread(Thread):
                 )))
                 self.logger.warning("Tokens were invalidated")
                 os.remove(".oauth2")
-                build_oauth(self.zoom, self.youtube, self.code_queue, self.message_queue)
+                build_oauth(self.zoom, self.youtube, self.code_queue, self.message_queue, self.logger)
                 self.message_queue.put(Message(NEW_TOKENS))
 
                 records, is_completed = self.zoom.get_records(meetings)
