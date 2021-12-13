@@ -1,7 +1,9 @@
 import json
 
+from message import *
 
-def build_oauth(zoom, youtube, code_queue):
+
+def build_oauth(zoom, youtube, code_queue, message_queue, new=False):
     try:
         with open(".oauth2", "r") as f:
             oauth2_cache = json.load(f)
@@ -10,6 +12,11 @@ def build_oauth(zoom, youtube, code_queue):
         print("Used cached tokens")
     except FileNotFoundError:
         print("Please, visit:", zoom.get_authorize_code_url())
+        if new:
+            message_queue.put(Message(NO_TOKENS, link=(
+                zoom.get_authorize_code_url(),
+                "Создание токенов"
+            )))
 
         zoom_code = code_queue.get()
         youtube_code = code_queue.get()

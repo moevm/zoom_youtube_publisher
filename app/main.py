@@ -46,7 +46,7 @@ if __name__ == '__main__':
     app_logger.info("App started")
 
     print("You can watch for a process on http://localhost:7034")
-    build_oauth(zoom, youtube, code_queue)
+    build_oauth(zoom, youtube, code_queue, message_queue, new=True)
 
     scheduler = SafeScheduler(logger=app_logger)
 
