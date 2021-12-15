@@ -34,6 +34,16 @@ if __name__ == '__main__':
     code_queue = Queue()
     message_queue = Queue()
 
+    logs_dir = "logs"
+    logs_path = os.path.join(logs_dir, "app.log")
+
+    if not os.path.isdir(logs_dir):
+        os.mkdir(logs_dir)
+
+    if not os.path.isfile(logs_path):
+        with open(logs_path, "w"):
+            pass
+
     app_logger = pull_logger("app", logging.INFO)
 
     threading.excepthook = print_hook
@@ -46,7 +56,7 @@ if __name__ == '__main__':
     app_logger.info("App started")
 
     print("You can watch for a process on http://localhost:7034")
-    build_oauth(zoom, youtube, code_queue)
+    build_oauth(zoom, youtube, code_queue, message_queue, app_logger, new=True)
 
     scheduler = SafeScheduler(logger=app_logger)
 

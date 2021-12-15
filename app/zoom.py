@@ -117,7 +117,6 @@ class ZoomClient:
             next_page_token = response.get("next_page_token")
 
             for record in records:
-                if meetings_count[record.meeting_id] > 1:
-                    record.require_date()
+                record.require_date()
 
         return records, is_completed

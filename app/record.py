@@ -1,9 +1,11 @@
+import os
 from datetime import datetime
 
 
 class Record:
 
     def __init__(self, meeting, record):
+        self.strftime_template = "%d.%m.%y %H:%M"
 
         self.meeting_topic = meeting["topic"]
         self.meeting_id = meeting["id"]
@@ -15,26 +17,39 @@ class Record:
         self.index = None
         self.video_id = None
 
-    def get_video_name(self, topic_template, date_template, index_template):
+        self.topic_template = None
+        self.date_template = None
+        self.index_template = None
 
-        title = topic_template.format(
+        self.save_flag = False
+        self.youtube_privacy_status = 'private'
+
+        self.youtube_playlist_id = None
+
+    @staticmethod
+    def _get_template(template, environ_key):
+        return template if template is not None else os.environ[environ_key]
+
+    def get_video_name(self):
+
+        title = self._get_template(self.topic_template, 'TOPIC_TEMPLATE').format(
             topic=self.meeting_topic,
             id=self.meeting_id,
-            date=self.meeting_time.strftime("%d.%m.%y")
+            date=self.meeting_time.strftime(self.strftime_template)
         )
 
         if self.date_required:
-            title += date_template.format(
+            title += self._get_template(self.date_template, 'DATE_TEMPLATE').format(
                 topic=self.meeting_topic,
                 id=self.meeting_id,
-                date=self.meeting_time.strftime("%d.%m.%y")
+                date=self.meeting_time.strftime(self.strftime_template)
             )
 
         if self.index_required:
-            title += index_template.format(
+            title += self._get_template(self.index_template, 'INDEX_TEMPLATE').format(
                 topic=self.meeting_topic,
                 id=self.meeting_id,
-                date=self.meeting_time.strftime("%d.%m.%y"),
+                date=self.meeting_time.strftime(self.strftime_template),
                 index=self.index
             )
 

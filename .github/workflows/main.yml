@@ -8,29 +8,41 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      working-directory: ./src
+      working-directory: ./app
+      docker-compose: ./docker-compose.ci.yml
+
+
     steps:
       - name: checkout code
         uses: actions/checkout@v2
 
       - name: build container
-        run: sh build.sh
+        run: docker-compose -f ${{env.docker-compose}} build
         working-directory: ${{env.working-directory}}
 
       - name: run container
-        run: docker run --name zoom_yt --env-file .env.example -p 127.0.0.1:7034:7034 -d -v "$(pwd):/app" zoom_records_publisher
+        run: docker-compose -f ${{env.docker-compose}} up -d
         working-directory: ${{env.working-directory}}
+
+      - name: run pytest
+        run: docker exec publisher bash -c 'cd ..; python -m pytest app/tests -vv'
 
       - name: check container
         run: |
           sleep 10
           docker ps
-          docker inspect zoom_yt
 
       - name: check net
         run: |
           netstat -a -n -o
           nc -vz 127.0.0.1 7034
 
-      - name: check container connection
+      - name: check app connection
         run: curl http://127.0.0.1:7034
+
+      - name: load mongo env values
+        run: cat mongo.env.example >> ${GITHUB_ENV}
+        working-directory: ${{env.working-directory}}
+
+      - name: check mongodb connection
+        run: mongosh mongodb://${{env.MONGO_INITDB_ROOT_USERNAME}}:${{env.MONGO_INITDB_ROOT_PASSWORD}}@localhost:27018/admin
