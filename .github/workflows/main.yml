@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./app
+      docker-compose: ./docker-compose.ci.yml
 
 
     steps:
@@ -16,11 +17,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: build container
-        run: docker-compose build
+        run: docker-compose -f ${{env.docker-compose}} build
         working-directory: ${{env.working-directory}}
 
       - name: run container
-        run: docker-compose up -d
+        run: docker-compose -f ${{env.docker-compose}} up -d
         working-directory: ${{env.working-directory}}
 
       - name: run pytest
