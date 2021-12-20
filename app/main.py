@@ -37,11 +37,12 @@ if __name__ == '__main__':
     logs_dir = "logs"
     logs_path = os.path.join(logs_dir, "app.log")
 
+    os.umask(0)
     if not os.path.isdir(logs_dir):
         os.mkdir(logs_dir)
 
     if not os.path.isfile(logs_path):
-        with open(logs_path, "w"):
+        with open(os.open(logs_path, os.O_CREAT | os.O_RDWR, 0o777), "w"):
             pass
 
     app_logger = pull_logger("app", logging.INFO)
