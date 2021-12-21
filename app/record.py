@@ -67,3 +67,6 @@ class Record:
     def set_video(self, video):
 
         self.video_id = video["id"]
+
+    def set_playlist_id(self, playlist_id):
+        self.youtube_playlist_id = playlist_id if len(playlist_id) > 0 else None

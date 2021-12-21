@@ -70,11 +70,11 @@ class PublisherThread(Thread):
             self.logger.info(f"{title}.mp4 downloaded")
 
         for index, record in enumerate(records):
+            record.set_playlist_id(os.environ['PLAYLIST_ID'])
 
             self.message_queue.put(Message(UPLOADING_RECORDS_STATUS, (index, len(records))))
 
             title = record.get_video_name()
-
 
             try:
                 video = self.youtube.upload_video(
