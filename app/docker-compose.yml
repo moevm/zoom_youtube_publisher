@@ -2,6 +2,7 @@ version: '3'
 
 services:
   zoom-youtube-publisher:
+    user: ${UID_1}:${GID_1}
     environment:
       - PYTHONUNBUFFERED=1
     build:

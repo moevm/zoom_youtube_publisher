@@ -1,1 +1,3 @@
-docker run --env-file .env -p 7034:7034 -it -v "$(pwd):/app" zoom_records_publisher
+export UID_1=$(id -u)
+export GID_1=$(id -g)
+docker-compose up
