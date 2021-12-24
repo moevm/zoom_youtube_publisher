@@ -61,7 +61,7 @@ class PublisherThread(Thread):
             self.message_queue.put(Message(DOWNLOADING_RECORDS_STATUS, (index, len(records))))
             title = record.get_video_name()
 
-            if self.db.find_one('zoom_records', {'_id': record.id})["process_status"] == 'in_process':
+            if self.db.find_one('zoom_records', {'_id': record.id})["process_status"] == 'in process':
                 try:
                     urlretrieve(f"{record.download_url}?access_token={self.zoom.access_token}", f"{title}.mp4")
                     self.db.update_one({'_id': record.id}, {'$set': {'process_status': 'downloaded'}})
