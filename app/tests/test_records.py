@@ -44,7 +44,7 @@ class TestRecords:
         assert pytest.records[0].youtube_privacy_status == 'private'
         assert not pytest.records[0].save_flag
         assert pytest.records[0].index is not None and pytest.records[1].index is not None
-        assert pytest.records[1].youtube_playlist_id is None
+        assert pytest.records[1].youtube_playlist_id is not None
 
     def test_get_video_name(self):
         record = pytest.records[0]
