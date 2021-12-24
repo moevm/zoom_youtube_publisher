@@ -1,3 +1,4 @@
+from distutils.util import strtobool
 import base64
 import os
 
@@ -128,7 +129,7 @@ class ZoomClient:
                                 })
 
                             current_records.append(Record(meeting, file))
-                            current_records[-1].save_flag = os.environ['SAVE_FILES']
+                            current_records[-1].save_flag = strtobool(os.environ['SAVE_FILES'])
                             current_records[-1].youtube_privacy_status = os.environ['PRIVACY_STATUS']
                             current_records[-1].youtube_playlist_id = os.environ['PLAYLIST_ID']
 
