@@ -7,9 +7,12 @@ import os
 import signal
 import sys
 
+from flask import Flask
+
 from publisher import PublisherThread
 from login import build_oauth
 from logs import pull_logger
+from mongo import AppDatabase
 from web import WebThread
 from safeschedule import SafeScheduler
 from signalhandlers import on_signal
@@ -50,7 +53,9 @@ if __name__ == '__main__':
 
     sys.excepthook = sys_hook
 
-    web = WebThread(zoom.get_authorize_code_url(), youtube.get_authorize_code_url(),
+    app = Flask(__name__)
+
+    web = WebThread(app, zoom.get_authorize_code_url(), youtube.get_authorize_code_url(),
                     code_queue, message_queue)
     web.start()
     app_logger.info("App started")
@@ -59,6 +64,8 @@ if __name__ == '__main__':
     build_oauth(zoom, youtube, code_queue, message_queue, app_logger, new=True)
 
     scheduler = SafeScheduler(logger=app_logger)
+    database = AppDatabase(app, 'mongodb://root:rootpassword@mongodb-container:27017/videos?authSource=admin')
+
 
     @on_signal
     def clear_schedule(schedule):
@@ -67,7 +74,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     def publish_job(logger):
-        publisher = PublisherThread(zoom, youtube, message_queue, code_queue, app_logger)
+        publisher = PublisherThread(database, zoom, youtube, message_queue, code_queue, app_logger)
         logger.info("Started publishing thread")
         publisher.start()
         publisher.join()

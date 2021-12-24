@@ -1,4 +1,6 @@
 import base64
+import os
+
 import requests
 
 from record import Record
@@ -78,7 +80,7 @@ class ZoomClient:
         self.access_token = response["access_token"]
         self.refresh_token = response["refresh_token"]
 
-    def get_records(self, meetings):
+    def get_records(self, db, meetings):
         records = []
         is_completed = True
 
@@ -95,7 +97,15 @@ class ZoomClient:
             )
 
             for meeting in response["meetings"]:
+                print(meeting)
                 if meeting["id"] in meetings:
+                    if not db.contains('zoom_conferences', {'_id': meeting["id"]}):
+                        db.insert_one('zoom_conferences', {
+                            '_id': meeting["id"],
+                            'topic': meeting["topic"],
+                            'time': meeting["start_time"],
+                            'playlist_id': os.environ['PLAYLIST_ID']
+                        })
 
                     meetings_count[meeting["id"]] += 1
 
@@ -107,7 +117,20 @@ class ZoomClient:
                             break
 
                         if file["recording_type"] == RECORD_TYPE:
+                            if not db.contains('zoom_records', {'_id': file["id"]}):
+                                db.insert_one('zoom_records', {
+                                    '_id': file["id"],
+                                    'meeting_id': file["meeting_id"],
+                                    'privacy_status': os.environ['PRIVACY_STATUS'],
+                                    'save_on_disk': os.environ['SAVE_FILES'],
+                                    'download_url': file['download_url'],
+                                    'process_status': 'in process'
+                                })
+
                             current_records.append(Record(meeting, file))
+                            current_records[-1].save_flag = os.environ['SAVE_FILES']
+                            current_records[-1].youtube_privacy_status = os.environ['PRIVACY_STATUS']
+                            current_records[-1].youtube_playlist_id = os.environ['PLAYLIST_ID']
 
                     if len(current_records) > 1:
                         for (index, record) in enumerate(current_records):

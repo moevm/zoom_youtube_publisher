@@ -16,8 +16,10 @@ QUOTA_EXCEEDED_REASON = "quotaExceeded"
 
 class PublisherThread(Thread):
 
-    def __init__(self, zoom, youtube, message_queue, code_queue, logger):
+    def __init__(self, database, zoom, youtube, message_queue, code_queue, logger):
         Thread.__init__(self)
+
+        self.db = database
 
         self.zoom = zoom
         self.youtube = youtube
@@ -33,10 +35,11 @@ class PublisherThread(Thread):
         records = []
 
         meetings = set(map(int, os.environ["MEETING_ID"].split(" ")))
+        self.logger.info("Processing meetings: " + ", ".join((str(meeting) for meeting in meetings)))
 
         while not is_completed:
             try:
-                records, is_completed = self.zoom.get_records(meetings)
+                records, is_completed = self.zoom.get_records(self.db, meetings)
             except KeyError:
                 self.message_queue.put(Message(INVALID_TOKENS, link=(
                     self.zoom.get_authorize_code_url(),
@@ -47,7 +50,7 @@ class PublisherThread(Thread):
                 build_oauth(self.zoom, self.youtube, self.code_queue, self.message_queue, self.logger)
                 self.message_queue.put(Message(NEW_TOKENS))
 
-                records, is_completed = self.zoom.get_records(meetings)
+                records, is_completed = self.zoom.get_records(self.db, meetings)
 
             if not is_completed:
                 self.message_queue.put(Message(WAIT_FOR_COMPLETED_STATUS))
@@ -58,46 +61,50 @@ class PublisherThread(Thread):
             self.message_queue.put(Message(DOWNLOADING_RECORDS_STATUS, (index, len(records))))
             title = record.get_video_name()
 
-            try:
-                urlretrieve(f"{record.download_url}?access_token={self.zoom.access_token}", f"{title}.mp4")
-            except HTTPError as e:
-                if e.code == HTTP_UNAUTHORIZED_CODE:
-                    self.zoom.update_token()
+            if self.db.find_one('zoom_records', {'_id': record.id})["process_status"] == 'in_process':
+                try:
                     urlretrieve(f"{record.download_url}?access_token={self.zoom.access_token}", f"{title}.mp4")
-                else:
-                    raise e
+                    self.db.update_one({'_id': record.id}, {'$set': {'process_status': 'downloaded'}})
+                except HTTPError as e:
+                    if e.code == HTTP_UNAUTHORIZED_CODE:
+                        self.zoom.update_token()
+                        urlretrieve(f"{record.download_url}?access_token={self.zoom.access_token}", f"{title}.mp4")
+                        self.db.update_one({'_id': record.id}, {'$set': {'process_status': 'downloaded'}})
+                    else:
+                        raise e
 
-            self.logger.info(f"{title}.mp4 downloaded")
+                self.logger.info(f"{title}.mp4 downloaded")
 
         for index, record in enumerate(records):
-            record.set_playlist_id(os.environ['PLAYLIST_ID'])
 
             self.message_queue.put(Message(UPLOADING_RECORDS_STATUS, (index, len(records))))
 
             title = record.get_video_name()
 
-            try:
-                video = self.youtube.upload_video(
-                    f"{title}.mp4",
-                    title,
-                    record.youtube_privacy_status)
+            if self.db.find_one('zoom_records', {'_id': record.id})['process_status'] == 'downloaded':
+                try:
+                    video = self.youtube.upload_video(
+                        f"{title}.mp4",
+                        title,
+                        record.youtube_privacy_status)
 
-                record.set_video(video)
-                self.logger.info(f"{title}.mp4 published")
-            except ResumableUploadError as e:
-                if e.error_details[0]["reason"] == QUOTA_EXCEEDED_REASON:
-                    self.message_queue.put(Message(QUOTA_EXCEEDED, end=True))
-                    print("Quota exceeded")
-                    break
-                raise e
+                    record.set_video(video)
+                    self.logger.info(f"{title}.mp4 published")
+                    self.db.update_one('zoom_records', {'_id': record.id}, {'$set': {'process_status': 'published'}})
+                except ResumableUploadError as e:
+                    if e.error_details[0]["reason"] == QUOTA_EXCEEDED_REASON:
+                        self.message_queue.put(Message(QUOTA_EXCEEDED, end=True))
+                        print("Quota exceeded")
+                        break
+                    raise e
 
-            if record.youtube_playlist_id is not None:
+                if record.youtube_playlist_id is not None:
 
-                # After video uploading and getting id video maybe still not available for using in next requests for
-                # some time
-                time.sleep(1)
-                self.message_queue.put(Message(MOVE_TO_PLAYLIST_STATUS, (index, len(records))))
-                self.youtube.move_video_to_playlist(record.video_id, record.youtube_playlist_id)
+                    # After video uploading and getting id video maybe still not available for using in next requests for
+                    # some time
+                    time.sleep(1)
+                    self.message_queue.put(Message(MOVE_TO_PLAYLIST_STATUS, (index, len(records))))
+                    self.youtube.move_video_to_playlist(record.video_id, record.youtube_playlist_id)
 
         for index, record in enumerate(records):
             if not record.save_flag:
