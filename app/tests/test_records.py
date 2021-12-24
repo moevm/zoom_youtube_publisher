@@ -34,7 +34,7 @@ class TestRecords:
     def test_get_records(self, mocker):
         mocker.patch('app.zoom.ZoomClient._repeat_get', mock_repeat_get)
         mocker.patch('requests.api.get', )
-        mocker.patch('app.mongo.AppDatabase.contains', lambda dat_class, collection, doc: False)
+        mocker.patch('app.mongo.AppDatabase.contains', lambda dat_class, collection, doc: True)
 
         client = ZoomClient("42", "secret")
         meetings = {1000000000000, 101010101010}
