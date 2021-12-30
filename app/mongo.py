@@ -9,7 +9,7 @@ class AppDatabase:
         return getattr(self.db, collection)
 
     def contains(self, collection, document):
-        return self._get_collection(collection).find(document).count_documents() != 0
+        return self._get_collection(collection).count_documents(document) != 0 
 
     def insert_one(self, collection, document):
         return self._get_collection(collection).insert_one(document)
