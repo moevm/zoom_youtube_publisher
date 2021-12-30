@@ -11,6 +11,7 @@ class Record:
         self.meeting_id = meeting["id"]
         self.meeting_time = datetime.strptime(meeting["start_time"], "%Y-%m-%dT%H:%M:%SZ")
         self.download_url = record["download_url"]
+        self.id = record["id"]
 
         self.date_required = False
         self.index_required = False

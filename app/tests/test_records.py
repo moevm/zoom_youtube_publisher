@@ -3,6 +3,7 @@ from os import path
 import pytest
 
 from app.zoom import ZoomClient
+from app.mongo import AppDatabase
 
 
 def pytest_configure():
@@ -33,16 +34,17 @@ class TestRecords:
     def test_get_records(self, mocker):
         mocker.patch('app.zoom.ZoomClient._repeat_get', mock_repeat_get)
         mocker.patch('requests.api.get', )
+        mocker.patch('app.mongo.AppDatabase.contains', lambda dat_class, collection, doc: True)
 
         client = ZoomClient("42", "secret")
         meetings = {1000000000000, 101010101010}
-        pytest.records, is_completed = client.get_records(meetings)
+        pytest.records, is_completed = client.get_records(AppDatabase(None, None), meetings)
 
         assert is_completed and len(pytest.records) == 2
         assert pytest.records[0].youtube_privacy_status == 'private'
         assert not pytest.records[0].save_flag
         assert pytest.records[0].index is not None and pytest.records[1].index is not None
-        assert pytest.records[1].youtube_playlist_id is None
+        assert pytest.records[1].youtube_playlist_id is not None
 
     def test_get_video_name(self):
         record = pytest.records[0]
